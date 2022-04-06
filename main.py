@@ -5,13 +5,18 @@ import torch.utils.tensorboard
 import torchvision
 
 
-def train(images, targets, device):
+amp_enabled = True
+
+
+def train(images, targets, device, scaler, amp_enabled):
     images, targets = images.to(device), targets.to(device)
     optimizer.zero_grad()
-    outputs = model(images)
-    loss = criterion(outputs, targets)
-    loss.backward()
-    optimizer.step()
+    with torch.cuda.amp.autocast(amp_enabled):
+        outputs = model(images)
+        loss = criterion(outputs, targets)
+    scaler.scale(loss).backward()
+    scaler.step(optimizer)
+    scaler.update()
 
 
 transform = torchvision.transforms.Compose([
@@ -27,6 +32,7 @@ model = torchvision.models.resnet18(pretrained=True).to(device)
 model.train()
 criterion = nn.CrossEntropyLoss()
 optimizer = torch.optim.SGD(model.parameters(), lr=0.001, momentum=0.9)
+scaler = torch.cuda.amp.GradScaler(enabled=amp_enabled)
 
 with torch.profiler.profile(schedule=torch.profiler.schedule(wait=1, warmup=1, active=3, repeat=2),
                             on_trace_ready=torch.profiler.tensorboard_trace_handler('./log/resnet18'),
@@ -37,5 +43,5 @@ with torch.profiler.profile(schedule=torch.profiler.schedule(wait=1, warmup=1, a
     for step, (images, targets) in enumerate(trainloader):
         if step >= (1 + 1 + 3) * 2:
             break
-        train(images, targets, device)
+        train(images, targets, device, scaler, amp_enabled)
         profiler.step()
