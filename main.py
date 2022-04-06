@@ -51,7 +51,7 @@ if __name__ == '__main__':
         tensorboard_logdir += f'_{args.num_workers}workers'
 
     with torch.profiler.profile(
-            schedule=torch.profiler.schedule(wait=1, warmup=1, active=3, repeat=2),
+            schedule=torch.profiler.schedule(wait=10, warmup=2, active=5, repeat=1),
             on_trace_ready=torch.profiler.tensorboard_trace_handler(tensorboard_logdir),
             record_shapes=True,
             profile_memory=True,
@@ -59,7 +59,5 @@ if __name__ == '__main__':
             with_flops=True,
     ) as profiler:
         for step, (images, targets) in enumerate(trainloader):
-            if step >= (1 + 1 + 3) * 2:
-                break
             train(images, targets, device, scaler, args.amp)
             profiler.step()
