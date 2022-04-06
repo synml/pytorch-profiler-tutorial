@@ -59,7 +59,7 @@ if __name__ == '__main__':
             with_flops=True,
     ) as profiler:
         for step, (images, targets) in enumerate(trainloader):
-            if step >= (5 + 2 + 5) * 1:
+            if step >= (2 + 2 + 5) * 1:
                 break
             train(images, targets, device, scaler, args.amp)
             profiler.step()
