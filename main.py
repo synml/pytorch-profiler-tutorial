@@ -42,10 +42,13 @@ if __name__ == '__main__':
     optimizer = torch.optim.SGD(model.parameters(), lr=0.001, momentum=0.9)
     scaler = torch.cuda.amp.GradScaler(enabled=args.amp)
 
+    tensorboard_logdir = 'logs/resnet18'
     if args.amp:
-        tensorboard_logdir = 'logs/resnet18_amp'
-    else:
-        tensorboard_logdir = 'logs/resnet18'
+        tensorboard_logdir += '_amp'
+    elif args.batch_size != 16:
+        tensorboard_logdir += f'_{args.batch_size}bs'
+    elif args.num_workers != 0:
+        tensorboard_logdir += f'_{args.num_workers}workers'
 
     with torch.profiler.profile(
             schedule=torch.profiler.schedule(wait=1, warmup=1, active=3, repeat=2),
