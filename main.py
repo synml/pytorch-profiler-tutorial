@@ -55,6 +55,7 @@ if __name__ == '__main__':
             on_trace_ready=torch.profiler.tensorboard_trace_handler(tensorboard_logdir),
             record_shapes=True,
             profile_memory=True,
+            with_stack=True if trainloader.num_workers == 0 else False,
             with_flops=True,
     ) as profiler:
         for step, (images, targets) in enumerate(trainloader):
