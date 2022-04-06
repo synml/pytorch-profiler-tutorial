@@ -56,7 +56,6 @@ if __name__ == '__main__':
             record_shapes=True,
             profile_memory=True,
             with_flops=True,
-            with_modules=True,
     ) as profiler:
         for step, (images, targets) in enumerate(trainloader):
             if step >= (1 + 1 + 3) * 2:
