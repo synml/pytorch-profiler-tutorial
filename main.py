@@ -21,6 +21,8 @@ def train(images, targets, device, scaler, amp_enabled):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--amp', type=bool, default=False, help='Specify whether to use an amp.')
+    parser.add_argument('--batch_size', type=int, default=16)
+    parser.add_argument('--num_workers', type=int, default=0)
     args = parser.parse_args()
 
     transform = torchvision.transforms.Compose([
@@ -29,7 +31,9 @@ if __name__ == '__main__':
         torchvision.transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
     ])
     trainset = torchvision.datasets.CIFAR10(root='data', train=True, download=True, transform=transform)
-    trainloader = torch.utils.data.DataLoader(trainset, batch_size=16, shuffle=True)
+    trainloader = torch.utils.data.DataLoader(
+        trainset, batch_size=args.batch_size, shuffle=True, num_workers=args.num_workers
+    )
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     model = torchvision.models.resnet18(pretrained=True).to(device)
