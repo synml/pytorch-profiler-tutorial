@@ -45,9 +45,9 @@ if __name__ == '__main__':
     tensorboard_logdir = 'logs/resnet18'
     if args.amp:
         tensorboard_logdir += '_amp'
-    elif args.batch_size != 16:
+    if args.batch_size != 16:
         tensorboard_logdir += f'_{args.batch_size}bs'
-    elif args.num_workers != 0:
+    if args.num_workers != 0:
         tensorboard_logdir += f'_{args.num_workers}workers'
 
     with torch.profiler.profile(
