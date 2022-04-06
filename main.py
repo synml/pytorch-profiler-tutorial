@@ -24,7 +24,7 @@ trainloader = torch.utils.data.DataLoader(trainset, batch_size=32, shuffle=True)
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 model = torchvision.models.resnet18(pretrained=True).to(device)
 model.train()
-criterion = torch.nn.CrossEntropyLoss()
+criterion = nn.CrossEntropyLoss()
 optimizer = torch.optim.SGD(model.parameters(), lr=0.001, momentum=0.9)
 
 with torch.profiler.profile(schedule=torch.profiler.schedule(wait=1, warmup=1, active=3, repeat=2),
