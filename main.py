@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
 import torch.utils.data
+import torch.utils.tensorboard
 import torchvision
 
 
