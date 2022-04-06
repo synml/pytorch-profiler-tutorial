@@ -52,7 +52,7 @@ if __name__ == '__main__':
         tensorboard_logdir += f'_{args.num_workers}workers'
 
     with torch.profiler.profile(
-            schedule=torch.profiler.schedule(wait=5, warmup=2, active=5, repeat=1),
+            schedule=torch.profiler.schedule(wait=2, warmup=2, active=5, repeat=1),
             on_trace_ready=torch.profiler.tensorboard_trace_handler(tensorboard_logdir),
             record_shapes=True,
             profile_memory=True,
