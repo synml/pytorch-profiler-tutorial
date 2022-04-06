@@ -5,6 +5,7 @@ import torch.nn as nn
 import torch.utils.data
 import torch.utils.tensorboard
 import torchvision
+import tqdm
 
 
 def train(images, targets, device, scaler, amp_enabled):
@@ -58,6 +59,6 @@ if __name__ == '__main__':
             with_stack=True if trainloader.num_workers == 0 else False,
             with_flops=True,
     ) as profiler:
-        for step, (images, targets) in enumerate(trainloader):
+        for images, targets in tqdm.tqdm(trainloader):
             train(images, targets, device, scaler, args.amp)
             profiler.step()
