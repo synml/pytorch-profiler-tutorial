@@ -22,7 +22,7 @@ def train(images, targets, device, scaler, amp_enabled):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--amp', type=bool, default=False, help='Specify whether to use an amp.')
-    parser.add_argument('--batch_size', type=int, default=32)
+    parser.add_argument('--batch_size', type=int, default=16)
     parser.add_argument('--num_workers', type=int, default=0)
     args = parser.parse_args()
 
@@ -46,7 +46,7 @@ if __name__ == '__main__':
     tensorboard_logdir = 'logs/resnet18'
     if args.amp:
         tensorboard_logdir += '_amp'
-    if args.batch_size != 32:
+    if args.batch_size != 16:
         tensorboard_logdir += f'_{args.batch_size}bs'
     if args.num_workers != 0:
         tensorboard_logdir += f'_{args.num_workers}workers'
