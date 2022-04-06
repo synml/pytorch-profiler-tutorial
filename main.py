@@ -52,13 +52,14 @@ if __name__ == '__main__':
         tensorboard_logdir += f'_{args.num_workers}workers'
 
     with torch.profiler.profile(
-            schedule=torch.profiler.schedule(wait=10, warmup=2, active=5, repeat=1),
+            schedule=torch.profiler.schedule(wait=5, warmup=2, active=5, repeat=1),
             on_trace_ready=torch.profiler.tensorboard_trace_handler(tensorboard_logdir),
             record_shapes=True,
             profile_memory=True,
-            with_stack=True if trainloader.num_workers == 0 else False,
             with_flops=True,
     ) as profiler:
-        for images, targets in tqdm.tqdm(trainloader):
+        for step, (images, targets) in enumerate(trainloader):
+            if step >= (5 + 2 + 5) * 1:
+                break
             train(images, targets, device, scaler, args.amp)
             profiler.step()
