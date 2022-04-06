@@ -38,12 +38,19 @@ if __name__ == '__main__':
     optimizer = torch.optim.SGD(model.parameters(), lr=0.001, momentum=0.9)
     scaler = torch.cuda.amp.GradScaler(enabled=args.amp)
 
-    with torch.profiler.profile(schedule=torch.profiler.schedule(wait=1, warmup=1, active=3, repeat=2),
-                                on_trace_ready=torch.profiler.tensorboard_trace_handler('./log/resnet18'),
-                                record_shapes=True,
-                                profile_memory=True,
-                                with_stack=True,
-                                with_flops=True) as profiler:
+    if args.amp:
+        tensorboard_logdir = 'logs/resnet18_amp'
+    else:
+        tensorboard_logdir = 'logs/resnet18'
+
+    with torch.profiler.profile(
+            schedule=torch.profiler.schedule(wait=1, warmup=1, active=3, repeat=2),
+            on_trace_ready=torch.profiler.tensorboard_trace_handler(tensorboard_logdir),
+            record_shapes=True,
+            profile_memory=True,
+            with_stack=True,
+            with_flops=True
+    ) as profiler:
         for step, (images, targets) in enumerate(trainloader):
             if step >= (1 + 1 + 3) * 2:
                 break
