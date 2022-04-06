@@ -22,7 +22,7 @@ def train(images, targets, device, scaler, amp_enabled):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--amp', type=bool, default=False, help='Specify whether to use an amp.')
-    parser.add_argument('--batch_size', type=int, default=128)
+    parser.add_argument('--batch_size', type=int, default=32)
     parser.add_argument('--num_workers', type=int, default=0)
     args = parser.parse_args()
 
@@ -46,20 +46,20 @@ if __name__ == '__main__':
     tensorboard_logdir = 'logs/resnet18'
     if args.amp:
         tensorboard_logdir += '_amp'
-    if args.batch_size != 128:
+    if args.batch_size != 32:
         tensorboard_logdir += f'_{args.batch_size}bs'
     if args.num_workers != 0:
         tensorboard_logdir += f'_{args.num_workers}workers'
 
     with torch.profiler.profile(
-            schedule=torch.profiler.schedule(wait=2, warmup=2, active=5, repeat=1),
+            schedule=torch.profiler.schedule(wait=1, warmup=1, active=5, repeat=1),
             on_trace_ready=torch.profiler.tensorboard_trace_handler(tensorboard_logdir),
             record_shapes=True,
             profile_memory=True,
             with_flops=True,
     ) as profiler:
         for step, (images, targets) in enumerate(trainloader):
-            if step >= (2 + 2 + 5) * 1:
+            if step >= (1 + 1 + 5) * 1:
                 break
             train(images, targets, device, scaler, args.amp)
             profiler.step()
